@@ -88,13 +88,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             decoration: BoxDecoration(
               color: AppColors.white,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: Icon(Icons.arrow_back, color: AppColors.primary, size: 20),
           ),
@@ -118,12 +111,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: BoxDecoration(
                         gradient: AppColors.primaryGradient,
                         shape: BoxShape.circle,
-                        boxShadow: [AppColors.primaryShadow],
                       ),
                       child: Icon(
                         Icons.person_add_rounded,
                         size: 40,
-                        color: AppColors.white,
+                        color: AppColors
+                            .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                       ),
                     ),
                   ),
@@ -133,10 +126,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // Card Principal com Material UI
                 Card(
-                  elevation: 8,
-                  shadowColor: AppColors.primary.withOpacity(0.2),
+                  elevation: 0, // Removendo sombra do card
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color: AppColors.grey.withOpacity(0.2),
+                    ), // Adicionando borda sutil
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
@@ -151,28 +146,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.black,
+                              color: AppColors
+                                  .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                             ),
                             textAlign: TextAlign.center,
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // Chip decorativo
-                          Center(
-                            child: Chip(
-                              avatar: Icon(
-                                Icons.app_registration,
-                                size: 18,
-                                color: AppColors.primary,
-                              ),
-                              label: const Text(
-                                'Cadastro Rápido',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              backgroundColor: AppColors.primaryLight,
-                              side: BorderSide.none,
-                            ),
                           ),
 
                           const SizedBox(height: 24),
@@ -186,7 +163,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               hintText: 'João Silva',
                               prefixIcon: Icon(
                                 Icons.person_outline,
-                                color: AppColors.primary,
+                                color: AppColors
+                                    .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -229,7 +207,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               hintText: 'seu@email.com',
                               prefixIcon: Icon(
                                 Icons.email_outlined,
-                                color: AppColors.primary,
+                                color: AppColors
+                                    .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -273,14 +252,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               hintText: '••••••••',
                               prefixIcon: Icon(
                                 Icons.lock_outline,
-                                color: AppColors.primary,
+                                color: AppColors
+                                    .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_outlined
                                       : Icons.visibility_off_outlined,
-                                  color: AppColors.primary,
+                                  color: AppColors
+                                      .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -329,14 +310,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               hintText: '••••••••',
                               prefixIcon: Icon(
                                 Icons.lock_outline,
-                                color: AppColors.primary,
+                                color: AppColors
+                                    .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscureConfirmPassword
                                       ? Icons.visibility_outlined
                                       : Icons.visibility_off_outlined,
-                                  color: AppColors.primary,
+                                  color: AppColors
+                                      .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -434,7 +417,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         'Termos de Uso',
                                         style: TextStyle(
                                           fontSize: 13,
-                                          color: AppColors.secondary,
+                                          color: AppColors
+                                              .grey, // Usando cor cinza conforme PALETA_CORES.md 26-26
                                           fontWeight: FontWeight.bold,
                                           decoration: TextDecoration.underline,
                                         ),
@@ -479,7 +463,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         'Política de Privacidade',
                                         style: TextStyle(
                                           fontSize: 13,
-                                          color: AppColors.secondary,
+                                          color: AppColors
+                                              .grey, // Usando cor cinza conforme PALETA_CORES.md 26-26
                                           fontWeight: FontWeight.bold,
                                           decoration: TextDecoration.underline,
                                         ),
@@ -499,7 +484,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             decoration: BoxDecoration(
                               gradient: AppColors.primaryGradient,
                               borderRadius: BorderRadius.circular(28),
-                              boxShadow: [AppColors.buttonShadow],
                             ),
                             child: ElevatedButton(
                               onPressed: _handleRegister,

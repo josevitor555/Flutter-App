@@ -30,11 +30,14 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const LoginScreen(),
+      home:
+          const LoginScreen(), // Alterado para mostrar a tela de login primeiro
     );
   }
 }
 
+// Comentei a classe MyHomePage pois agora não será mais a tela inicial
+/*
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -83,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             const SizedBox(height: 30),
-
+            
             // COMPONENTE GETWIDGET EM WHITE MODE
             GFButton(
               onPressed: _incrementCounter,
@@ -100,3 +103,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+*/

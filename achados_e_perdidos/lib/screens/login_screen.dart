@@ -68,12 +68,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: BoxDecoration(
                         gradient: AppColors.primaryGradient,
                         shape: BoxShape.circle,
-                        boxShadow: [AppColors.primaryShadow],
                       ),
                       child: Icon(
                         Icons.search_rounded,
                         size: 50,
-                        color: AppColors.white,
+                        color: AppColors
+                            .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                       ),
                     ),
                   ),
@@ -83,10 +83,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Card Principal com Material UI
                 Card(
-                  elevation: 8,
-                  shadowColor: AppColors.primary.withOpacity(0.2),
+                  elevation: 0, // Removendo sombra do card
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color: AppColors.grey.withOpacity(0.2),
+                    ), // Adicionando borda sutil
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
@@ -101,28 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.black,
+                              color: AppColors
+                                  .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                             ),
                             textAlign: TextAlign.center,
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // Chip decorativo
-                          Center(
-                            child: Chip(
-                              avatar: Icon(
-                                Icons.lock_person,
-                                size: 18,
-                                color: AppColors.primary,
-                              ),
-                              label: const Text(
-                                'Login Seguro',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              backgroundColor: AppColors.primaryLight,
-                              side: BorderSide.none,
-                            ),
                           ),
 
                           const SizedBox(height: 30),
@@ -136,7 +120,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               hintText: 'seu@email.com',
                               prefixIcon: Icon(
                                 Icons.email_outlined,
-                                color: AppColors.primary,
+                                color: AppColors
+                                    .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -179,14 +164,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               hintText: '••••••••',
                               prefixIcon: Icon(
                                 Icons.lock_outline,
-                                color: AppColors.primary,
+                                color: AppColors
+                                    .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_outlined
                                       : Icons.visibility_off_outlined,
-                                  color: AppColors.primary,
+                                  color: AppColors
+                                      .black, // Usando cor preta conforme PALETA_CORES.md 39-42
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -281,7 +268,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'Esqueceu a senha?',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: AppColors.secondary,
+                                    color: AppColors
+                                        .grey, // Usando cor cinza conforme PALETA_CORES.md 24-27
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -297,7 +285,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: BoxDecoration(
                               gradient: AppColors.primaryGradient,
                               borderRadius: BorderRadius.circular(28),
-                              boxShadow: [AppColors.buttonShadow],
                             ),
                             child: ElevatedButton(
                               onPressed: _handleLogin,
@@ -333,7 +320,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       'Não tem uma conta? ',
-                      style: TextStyle(color: AppColors.grey, fontSize: 14),
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 14,
+                      ), // Usando cor cinza conforme PALETA_CORES.md 23-27
                     ),
                     TextButton(
                       onPressed: () {
@@ -348,7 +338,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Cadastre-se',
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppColors.primary,
+                          color: AppColors
+                              .grey, // Usando cor cinza conforme PALETA_CORES.md 23-27
                           fontWeight: FontWeight.bold,
                         ),
                       ),
