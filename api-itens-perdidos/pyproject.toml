@@ -1,0 +1,12 @@
+[project]
+name = "api-itens"
+version = "1.0.0"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "sqlalchemy",
+    "pydantic",
+    "python-jose",
+    "python-multipart",
+    "passlib[bcrypt]"
+]

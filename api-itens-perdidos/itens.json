@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "titulo": "Mochila preta",
+    "descricao": "Mochila com caderno azul",
+    "categoria": "Acessórios",
+    "local": "Biblioteca",
+    "status": "perdido",
+    "id_usuario": 1
+  },
+  {
+    "id": 2,
+    "titulo": "Celular Samsung",
+    "descricao": "Tela trincada",
+    "categoria": "Eletrônicos",
+    "local": "Pátio",
+    "status": "encontrado",
+    "id_usuario": 1
+  }
+]
