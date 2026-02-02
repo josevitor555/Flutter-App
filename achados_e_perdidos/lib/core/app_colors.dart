@@ -14,6 +14,10 @@ class AppColors {
   static const Color iceWhite = Color(0xFFF7F7F7); // Branco Gelo
   static const Color white = Color(0xFFFFFFFF); // Branco Puro
 
+  // Status dos itens (apenas Lost e Found)
+  static const Color statusFound = Color(0xFF81C784); // Verde claro para Encontrado
+  static const Color statusLost = Color(0xFFE57373);  // Vermelho claro para Perdido
+
   // Variações da cor primária
   static Color primaryLight = primary.withOpacity(0.1);
   static Color primaryMedium = primary.withOpacity(0.3);

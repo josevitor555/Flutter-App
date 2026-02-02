@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
-import 'screens/login_screen.dart';
+import 'package:ahadoseperdidos/core/app_colors.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,24 +14,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Achados e Perdidos',
       debugShowCheckedModeBanner: false,
-      // CONFIGURAÇÃO WHITE MODE
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white, // Fundo totalmente branco
+        scaffoldBackgroundColor: AppColors.white,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue, // Cor base para os componentes
+          seedColor: AppColors.primary,
+          primary: AppColors.primary,
           brightness: Brightness.light,
-          surface: Colors.white,
+          surface: AppColors.white,
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black, // Texto da AppBar em preto
+          backgroundColor: AppColors.white,
+          foregroundColor: AppColors.black,
           elevation: 0,
         ),
       ),
-      home:
-          const LoginScreen(), // Alterado para mostrar a tela de login primeiro
+      home: const HomeScreen(),
     );
   }
 }
