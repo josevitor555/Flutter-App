@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ahadoseperdidos/core/app_colors.dart';
+import 'package:ahadoseperdidos/models/lost_item.dart';
+import 'package:ahadoseperdidos/screens/items_list_screen.dart';
+import 'package:ahadoseperdidos/widgets/item_detail_modal.dart';
 import 'package:ahadoseperdidos/widgets/report_item_modal.dart';
 
 /// Tela inicial do aplicativo Achados e Perdidos.
@@ -17,26 +20,61 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final TextEditingController _searchController = TextEditingController();
 
-  // Dados de exemplo para itens próximos
-  final List<Map<String, dynamic>> _nearbyItems = [
-    {
-      'title': 'Carteira com crachá',
-      'imageUrl': 'https://picsum.photos/seed/wallet1/400/300',
-      'status': 'Encontrado',
-      'isFound': true,
-    },
-    {
-      'title': 'Fones de ouvido',
-      'imageUrl': 'https://picsum.photos/seed/headphones/400/300',
-      'status': 'Perdido',
-      'isFound': false,
-    },
-    {
-      'title': 'Carteira marrom',
-      'imageUrl': 'https://picsum.photos/seed/wallet2/400/300',
-      'status': 'Perdido',
-      'isFound': false,
-    },
+  List<LostItem> _items = [
+    LostItem(
+      id: '1',
+      title: 'Carteira com crachá',
+      imageUrl: 'https://picsum.photos/seed/wallet1/400/300',
+      isFound: true,
+      location: 'Biblioteca - 2º andar',
+      description: 'Carteira marrom com crachá de identificação da instituição.',
+      category: 'Carteira e Dinheiro',
+    ),
+    LostItem(
+      id: '2',
+      title: 'Fones de ouvido',
+      imageUrl: 'https://picsum.photos/seed/headphones/400/300',
+      isFound: false,
+      location: 'Auditório principal',
+      description: 'Fones de ouvido prateados sem fio. Perdidos durante a palestra.',
+      category: 'Eletrônicos',
+    ),
+    LostItem(
+      id: '3',
+      title: 'Carteira marrom',
+      imageUrl: 'https://picsum.photos/seed/wallet2/400/300',
+      isFound: false,
+      location: 'Cantina',
+      description: 'Carteira de couro marrom com documentos e cartões.',
+      category: 'Carteira e Dinheiro',
+    ),
+    LostItem(
+      id: '4',
+      title: 'Óculos de sol',
+      imageUrl: 'https://picsum.photos/seed/sunglasses/400/300',
+      isFound: true,
+      location: 'Quadra esportiva',
+      description: 'Óculos de sol com armação preta. Encontrados no vestiário.',
+      category: 'Óculos',
+    ),
+    LostItem(
+      id: '5',
+      title: 'Chaves com chaveiro',
+      imageUrl: 'https://picsum.photos/seed/keys/400/300',
+      isFound: false,
+      location: 'Corredor - bloco A',
+      description: 'Chaveiro preto com várias chaves. Identificação disponível.',
+      category: 'Chaves',
+    ),
+    LostItem(
+      id: '6',
+      title: 'Caderno azul',
+      imageUrl: 'https://picsum.photos/seed/notebook/400/300',
+      isFound: true,
+      location: 'Sala de aula 101',
+      description: 'Caderno universitário azul com anotações. Nome na capa.',
+      category: 'Documentos',
+    ),
   ];
 
   @override
@@ -279,7 +317,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () async {
+                final updatedItems = await Navigator.push<List<LostItem>>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemsListScreen(initialItems: _items),
+                  ),
+                );
+                if (updatedItems != null && mounted) {
+                  setState(() => _items = updatedItems);
+                }
+              },
               child: Text(
                 'Ver todos',
                 style: TextStyle(
@@ -296,15 +344,13 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 180,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: _nearbyItems.length,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(right: 20),
+            itemCount: _items.length,
             separatorBuilder: (_, __) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
-              final item = _nearbyItems[index];
-              return _buildItemCard(
-                title: item['title'] as String,
-                imageUrl: item['imageUrl'] as String,
-                isFound: item['isFound'] as bool,
-              );
+              final item = _items[index];
+              return _buildItemCard(item: item);
             },
           ),
         ),
@@ -312,18 +358,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildItemCard({
-    required String title,
-    required String imageUrl,
-    required bool isFound,
-  }) {
-    final statusColor = isFound ? AppColors.statusFound : AppColors.statusLost;
-    final statusLabel = isFound ? 'Encontrado' : 'Perdido';
+  Widget _buildItemCard({required LostItem item}) {
+    final statusColor = item.isFound ? AppColors.statusFound : AppColors.statusLost;
+    final statusLabel = item.statusLabel;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: () => ItemDetailModal.show(context, item),
         borderRadius: BorderRadius.circular(16),
         child: SizedBox(
           width: 160,
@@ -336,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: CachedNetworkImage(
-                        imageUrl: imageUrl,
+                        imageUrl: item.imageUrl,
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
@@ -392,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                title,
+                item.title,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -523,10 +565,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _onNavTap(int index) async {
+    if (index == 1) {
+      // Itens - abre a lista completa
+      final updatedItems = await Navigator.push<List<LostItem>>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ItemsListScreen(initialItems: _items),
+        ),
+      );
+      if (updatedItems != null && mounted) {
+        setState(() => _items = updatedItems);
+      }
+    } else {
+      setState(() => _currentIndex = index);
+    }
+  }
+
   Widget _buildNavItem(int index, IconData icon, IconData activeIcon, String label) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _onNavTap(index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),

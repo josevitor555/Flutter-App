@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ahadoseperdidos/core/app_colors.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
+      // home: const LoginScreen(),
       home: const HomeScreen(),
     );
   }
