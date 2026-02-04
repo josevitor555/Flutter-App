@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, Session, relationship
 from jose import jwt, JWTError
@@ -71,6 +72,15 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="API Itens Perdidos")
 
+# Configuração do CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Em produção, substitua por domínios específicos
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # ======================
@@ -136,6 +146,10 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
+    # Verificar tamanho da senha para evitar erros com bcrypt
+    if len(form_data.password.encode('utf-8')) > 72:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Senha muito longa!")
+    
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
@@ -166,6 +180,10 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
             detail="Username já está em uso"
         )
 
+    # Verificar tamanho da senha para evitar erros com bcrypt
+    if len(user.password.encode('utf-8')) > 72:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Senha muito longa!")
+    
     # Criar novo usuário com senha hash
     hashed_password = get_password_hash(user.password)
     new_user = Usuario(username=user.username, password=hashed_password)

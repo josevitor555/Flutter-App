@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ahadoseperdidos/core/app_colors.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
+import 'services/auth_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,9 +34,28 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: const LoginScreen(),
-
-      // home: const HomeScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => FutureBuilder<bool>(
+          future: AuthService.isLoggedIn(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            } else {
+              if (snapshot.data == true) {
+                return const HomeScreen();
+              } else {
+                return const LoginScreen();
+              }
+            }
+          },
+        ),
+        '/home': (context) => const HomeScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+      },
     );
   }
 }

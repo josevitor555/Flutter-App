@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ahadoseperdidos/core/app_colors.dart';
 import 'register_screen.dart';
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,24 +24,57 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: AppColors.white),
-              const SizedBox(width: 8),
-              const Text('Login realizado com sucesso!'),
-            ],
-          ),
-          backgroundColor: AppColors.primary,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
+      // Chama o serviço de autenticação para fazer login
+      final token = await AuthService.login(
+        _emailController.text,
+        _passwordController.text,
       );
+
+      if (token != null) {
+        // Login bem-sucedido, redireciona para a tela inicial
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: AppColors.white),
+                const SizedBox(width: 8),
+                const Text('Login realizado com sucesso!'),
+              ],
+            ),
+            backgroundColor: AppColors.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+
+        // Redireciona para a tela inicial após um pequeno delay
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      } else {
+        // Login falhou
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error_outline, color: AppColors.white),
+                const SizedBox(width: 8),
+                const Text('Credenciais inválidas. Tente novamente.'),
+              ],
+            ),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -66,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppColors.primary.withOpacity(0.2),
-                      border: Border.all(color: AppColors.primary.withOpacity(0.4)),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.4),
+                      ),
                     ),
                     child: Icon(
                       Icons.search_rounded,
@@ -202,7 +238,10 @@ class _LoginScreenState extends State<LoginScreen> {
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: AppColors.error),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
           ),
         ),
       ],
@@ -237,10 +276,16 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: InputDecoration(
             hintText: '••••••••',
             hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
-            prefixIcon: Icon(Icons.lock_outline, color: Colors.grey.shade600, size: 22),
+            prefixIcon: Icon(
+              Icons.lock_outline,
+              color: Colors.grey.shade600,
+              size: 22,
+            ),
             suffixIcon: IconButton(
               icon: Icon(
-                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                _obscurePassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
                 color: Colors.grey.shade600,
                 size: 22,
               ),
@@ -266,7 +311,10 @@ class _LoginScreenState extends State<LoginScreen> {
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: AppColors.error),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
           ),
         ),
       ],
@@ -286,12 +334,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: _rememberMe
-                      ? AppColors.primary
-                      : Colors.transparent,
+                  color: _rememberMe ? AppColors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
-                    color: _rememberMe ? AppColors.primary : Colors.grey.shade400,
+                    color: _rememberMe
+                        ? AppColors.primary
+                        : Colors.grey.shade400,
                     width: 2,
                   ),
                 ),
@@ -302,10 +350,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(width: 10),
               Text(
                 'Lembrar-me',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.black,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.black),
               ),
             ],
           ),
@@ -373,18 +418,13 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Text(
           'Não tem uma conta? ',
-          style: TextStyle(
-            color: AppColors.grey,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: AppColors.grey, fontSize: 14),
         ),
         TextButton(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const RegisterScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const RegisterScreen()),
             );
           },
           child: Text(

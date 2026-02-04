@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import '../core/app_colors.dart';
+import '../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -28,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _handleRegister() {
+  void _handleRegister() async {
     if (!_acceptTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -50,28 +51,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: AppColors.white),
-              const SizedBox(width: 8),
-              const Text('Cadastro realizado com sucesso!'),
-            ],
-          ),
-          backgroundColor: AppColors.primary,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+      // Chama o serviço de autenticação para registrar o usuário
+      final success = await AuthService.register(
+        _nameController.text,
+        _passwordController.text,
       );
 
-      Future.delayed(const Duration(seconds: 2), () {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: AppColors.white),
+                const SizedBox(width: 8),
+                const Text('Cadastro realizado com sucesso!'),
+              ],
+            ),
+            backgroundColor: AppColors.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+
+        // Após cadastro bem-sucedido, redireciona para a tela de login
+        await Future.delayed(const Duration(milliseconds: 1500));
         if (mounted) {
-          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, '/login');
         }
-      });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error_outline, color: AppColors.white),
+                const SizedBox(width: 8),
+                const Text('Falha no cadastro. Tente novamente.'),
+              ],
+            ),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
     }
   }
 
