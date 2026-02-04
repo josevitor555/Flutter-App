@@ -10,6 +10,7 @@ from typing import Optional
 import uuid
 import shutil
 import os
+from passlib.context import CryptContext
 from schemas import ItemBase, ItemResponse, ItemUpdate, UserCreate, Token, ItemCreate
 
 # ======================
@@ -87,7 +88,7 @@ def get_db():
 
 def authenticate_user(username: str, password: str, db: Session):
     user = db.query(Usuario).filter(Usuario.username == username).first()
-    if user and user.password == password:
+    if user and verify_password(password, user.password):
         return user
     return None
 
@@ -115,8 +116,15 @@ def get_current_user(
         raise HTTPException(status_code=401, detail="Token inválido")
 
 
-def fake_hash_password(password: str):
-    return password  # Isso é apenas para demonstração - usar bcrypt em produção
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
 
 
 # ======================
@@ -159,7 +167,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         )
 
     # Criar novo usuário com senha hash
-    hashed_password = fake_hash_password(user.password)
+    hashed_password = get_password_hash(user.password)
     new_user = Usuario(username=user.username, password=hashed_password)
     db.add(new_user)
     db.commit()
