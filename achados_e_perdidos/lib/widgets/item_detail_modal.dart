@@ -21,7 +21,9 @@ class ItemDetailModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = item.isFound ? AppColors.statusFound : AppColors.statusLost;
+    final statusColor = item.isFound
+        ? AppColors.statusFound
+        : AppColors.statusLost;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.7,
@@ -52,7 +54,8 @@ class ItemDetailModal extends StatelessWidget {
                   _buildStatusBadge(statusColor),
                   const SizedBox(height: 16),
                   _buildTitle(),
-                  if (item.description != null && item.description!.isNotEmpty) ...[
+                  if (item.description != null &&
+                      item.description!.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     _buildSection('Descrição', item.description!),
                   ],
@@ -91,15 +94,23 @@ class ItemDetailModal extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: CachedNetworkImage(
-          imageUrl: item.imageUrl,
+          imageUrl: item.imageUrl ?? '',
           fit: BoxFit.cover,
           placeholder: (_, __) => Container(
             color: Colors.grey.shade200,
-            child: Icon(Icons.image_outlined, size: 48, color: Colors.grey.shade400),
+            child: Icon(
+              Icons.image_outlined,
+              size: 48,
+              color: Colors.grey.shade400,
+            ),
           ),
           errorWidget: (_, __, ___) => Container(
             color: Colors.grey.shade200,
-            child: Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey.shade400),
+            child: Icon(
+              Icons.broken_image_outlined,
+              size: 48,
+              color: Colors.grey.shade400,
+            ),
           ),
         ),
       ),
@@ -162,11 +173,7 @@ class ItemDetailModal extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.black,
-            height: 1.4,
-          ),
+          style: TextStyle(fontSize: 16, color: AppColors.black, height: 1.4),
         ),
       ],
     );
@@ -187,15 +194,16 @@ class ItemDetailModal extends StatelessWidget {
         const SizedBox(height: 6),
         Row(
           children: [
-            Icon(Icons.location_on_outlined, size: 20, color: AppColors.primary),
+            Icon(
+              Icons.location_on_outlined,
+              size: 20,
+              color: AppColors.primary,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 item.location!,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.black,
-                ),
+                style: TextStyle(fontSize: 16, color: AppColors.black),
               ),
             ),
           ],

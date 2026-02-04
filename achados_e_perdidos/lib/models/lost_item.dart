@@ -1,34 +1,56 @@
-/// Modelo de item perdido ou encontrado.
-/// Status: apenas Perdido ou Encontrado.
 class LostItem {
-  final String id;
+  final int id; // No Python o ID é Integer
   final String title;
-  final String imageUrl;
-  final bool isFound; // true = Encontrado, false = Perdido
+  final String? imageUrl; // No Python é nullable=True
+  final bool isFound;
   final String? description;
   final String? location;
   final String? category;
+  final int usuarioId; // Importante para saber de quem é o item
 
   const LostItem({
     required this.id,
     required this.title,
-    required this.imageUrl,
+    this.imageUrl,
     required this.isFound,
     this.description,
     this.location,
     this.category,
+    required this.usuarioId,
   });
+
+  // Ajuste aqui: Mapeando os nomes em português do Python para o seu código
+  factory LostItem.fromJson(Map<String, dynamic> json) => LostItem(
+    id: json['id'] as int,
+    title: json['titulo'] as String, // 'titulo' vem do Python
+    imageUrl: json['imagem_url'] as String?, // 'imagem_url' vem do Python
+    isFound: json['status'] == 'found', // Converte String "found" para booleano
+    description: json['descricao'] as String?,
+    location: json['local'] as String?,
+    category: json['categoria'] as String?,
+    usuarioId: json['usuario_id'] as int,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'titulo': title,
+    'descricao': description,
+    'categoria': category,
+    'local': location,
+    'status': isFound ? 'found' : 'lost', // Devolve como String para o Python
+    'imagem_url': imageUrl,
+  };
 
   String get statusLabel => isFound ? 'Encontrado' : 'Perdido';
 
   LostItem copyWith({
-    String? id,
+    int? id,
     String? title,
     String? imageUrl,
     bool? isFound,
     String? description,
     String? location,
     String? category,
+    int? usuarioId,
   }) {
     return LostItem(
       id: id ?? this.id,
@@ -38,26 +60,7 @@ class LostItem {
       description: description ?? this.description,
       location: location ?? this.location,
       category: category ?? this.category,
+      usuarioId: usuarioId ?? this.usuarioId,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'imageUrl': imageUrl,
-        'isFound': isFound,
-        'description': description,
-        'location': location,
-        'category': category,
-      };
-
-  factory LostItem.fromJson(Map<String, dynamic> json) => LostItem(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        imageUrl: json['imageUrl'] as String,
-        isFound: json['isFound'] as bool,
-        description: json['description'] as String?,
-        location: json['location'] as String?,
-        category: json['category'] as String?,
-      );
 }

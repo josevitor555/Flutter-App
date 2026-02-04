@@ -8,10 +8,8 @@ import 'package:ahadoseperdidos/models/lost_item.dart';
 class ItemsListScreen extends StatefulWidget {
   final List<LostItem> initialItems;
 
-  const ItemsListScreen({
-    Key? key,
-    required this.initialItems,
-  }) : super(key: key);
+  const ItemsListScreen({Key? key, required this.initialItems})
+    : super(key: key);
 
   @override
   State<ItemsListScreen> createState() => _ItemsListScreenState();
@@ -28,25 +26,37 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
 
   Future<bool> _confirmDelete(LostItem item) async {
     return await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Excluir item'),
-        content: Text(
-          'Deseja realmente excluir "${item.title}"? Esta ação não pode ser desfeita.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancelar', style: TextStyle(color: AppColors.grey)),
+          context: context,
+          builder: (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text('Excluir item'),
+            content: Text(
+              'Deseja realmente excluir "${item.title}"? Esta ação não pode ser desfeita.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(color: AppColors.grey),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  'Excluir',
+                  style: TextStyle(
+                    color: AppColors.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Excluir', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w600)),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   void _performDelete(LostItem item) async {
@@ -58,7 +68,9 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
           content: const Text('Item excluído com sucesso'),
           backgroundColor: AppColors.primary,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }
@@ -77,10 +89,12 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
         elevation: 0,
         leading: IconButton(
           onPressed: _goBack,
-          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.black, size: 22),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.grey.shade100,
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: AppColors.black,
+            size: 22,
           ),
+          style: IconButton.styleFrom(backgroundColor: Colors.grey.shade100),
         ),
         title: Text(
           'Todos os itens',
@@ -113,11 +127,7 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.inbox_outlined,
-              size: 80,
-              color: Colors.grey.shade400,
-            ),
+            Icon(Icons.inbox_outlined, size: 80, color: Colors.grey.shade400),
             const SizedBox(height: 20),
             Text(
               'Nenhum item cadastrado',
@@ -131,10 +141,7 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
             const SizedBox(height: 8),
             Text(
               'Relate itens perdidos ou encontrados pela seção "Relatar" na tela inicial.',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.grey,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.grey),
               textAlign: TextAlign.center,
             ),
           ],
@@ -144,7 +151,9 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
   }
 
   Widget _buildListItem(LostItem item) {
-    final statusColor = item.isFound ? AppColors.statusFound : AppColors.statusLost;
+    final statusColor = item.isFound
+        ? AppColors.statusFound
+        : AppColors.statusLost;
 
     return Dismissible(
       key: ValueKey(item.id),
@@ -168,7 +177,9 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                 content: const Text('Item excluído com sucesso'),
                 backgroundColor: AppColors.primary,
                 behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             );
           }
@@ -202,7 +213,7 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: CachedNetworkImage(
-                      imageUrl: item.imageUrl,
+                      imageUrl: item.imageUrl ?? '',
                       width: 72,
                       height: 72,
                       fit: BoxFit.cover,
@@ -210,13 +221,19 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                         color: Colors.grey.shade200,
                         width: 72,
                         height: 72,
-                        child: Icon(Icons.image_outlined, color: Colors.grey.shade400),
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
                       errorWidget: (_, __, ___) => Container(
                         color: Colors.grey.shade200,
                         width: 72,
                         height: 72,
-                        child: Icon(Icons.broken_image_outlined, color: Colors.grey.shade400),
+                        child: Icon(
+                          Icons.broken_image_outlined,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
                     ),
                   ),
@@ -235,16 +252,24 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        if (item.location != null && item.location!.isNotEmpty) ...[
+                        if (item.location != null &&
+                            item.location!.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(Icons.location_on_outlined, size: 14, color: AppColors.grey),
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 14,
+                                color: AppColors.grey,
+                              ),
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
                                   item.location!,
-                                  style: TextStyle(fontSize: 13, color: AppColors.grey),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.grey,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -252,22 +277,31 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                             ],
                           ),
                         ],
-                        if (item.category != null && item.category!.isNotEmpty) ...[
+                        if (item.category != null &&
+                            item.category!.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
                             item.category!,
-                            style: TextStyle(fontSize: 12, color: AppColors.grey),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.grey,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
                         const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: statusColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: statusColor.withOpacity(0.5)),
+                            border: Border.all(
+                              color: statusColor.withOpacity(0.5),
+                            ),
                           ),
                           child: Text(
                             item.statusLabel,
@@ -283,7 +317,11 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                   ),
                   IconButton(
                     onPressed: () => _performDelete(item),
-                    icon: Icon(Icons.delete_outline, color: AppColors.error, size: 24),
+                    icon: Icon(
+                      Icons.delete_outline,
+                      color: AppColors.error,
+                      size: 24,
+                    ),
                     style: IconButton.styleFrom(
                       backgroundColor: AppColors.error.withOpacity(0.1),
                     ),

@@ -22,58 +22,67 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<LostItem> _items = [
     LostItem(
-      id: '1',
+      id: 1,
       title: 'Carteira com crachá',
       imageUrl: 'https://picsum.photos/seed/wallet1/400/300',
       isFound: true,
       location: 'Biblioteca - 2º andar',
-      description: 'Carteira marrom com crachá de identificação da instituição.',
+      description:
+          'Carteira marrom com crachá de identificação da instituição.',
       category: 'Carteira e Dinheiro',
+      usuarioId: 1,
     ),
     LostItem(
-      id: '2',
+      id: 2,
       title: 'Fones de ouvido',
       imageUrl: 'https://picsum.photos/seed/headphones/400/300',
       isFound: false,
       location: 'Auditório principal',
-      description: 'Fones de ouvido prateados sem fio. Perdidos durante a palestra.',
+      description:
+          'Fones de ouvido prateados sem fio. Perdidos durante a palestra.',
       category: 'Eletrônicos',
+      usuarioId: 1,
     ),
     LostItem(
-      id: '3',
+      id: 3,
       title: 'Carteira marrom',
       imageUrl: 'https://picsum.photos/seed/wallet2/400/300',
       isFound: false,
       location: 'Cantina',
       description: 'Carteira de couro marrom com documentos e cartões.',
       category: 'Carteira e Dinheiro',
+      usuarioId: 1,
     ),
     LostItem(
-      id: '4',
+      id: 4,
       title: 'Óculos de sol',
       imageUrl: 'https://picsum.photos/seed/sunglasses/400/300',
       isFound: true,
       location: 'Quadra esportiva',
       description: 'Óculos de sol com armação preta. Encontrados no vestiário.',
       category: 'Óculos',
+      usuarioId: 1,
     ),
     LostItem(
-      id: '5',
+      id: 5,
       title: 'Chaves com chaveiro',
       imageUrl: 'https://picsum.photos/seed/keys/400/300',
       isFound: false,
       location: 'Corredor - bloco A',
-      description: 'Chaveiro preto com várias chaves. Identificação disponível.',
+      description:
+          'Chaveiro preto com várias chaves. Identificação disponível.',
       category: 'Chaves',
+      usuarioId: 1,
     ),
     LostItem(
-      id: '6',
+      id: 6,
       title: 'Caderno azul',
       imageUrl: 'https://picsum.photos/seed/notebook/400/300',
       isFound: true,
       location: 'Sala de aula 101',
       description: 'Caderno universitário azul com anotações. Nome na capa.',
       category: 'Documentos',
+      usuarioId: 1,
     ),
   ];
 
@@ -212,7 +221,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 18,
+          ),
         ),
       ),
     );
@@ -238,7 +250,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildReportButton(String label, IconData icon, {required bool isFound}) {
+  Widget _buildReportButton(
+    String label,
+    IconData icon, {
+    required bool isFound,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -359,7 +375,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildItemCard({required LostItem item}) {
-    final statusColor = item.isFound ? AppColors.statusFound : AppColors.statusLost;
+    final statusColor = item.isFound
+        ? AppColors.statusFound
+        : AppColors.statusLost;
     final statusLabel = item.statusLabel;
 
     return Material(
@@ -378,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: CachedNetworkImage(
-                        imageUrl: item.imageUrl,
+                        imageUrl: item.imageUrl ?? '',
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
@@ -555,8 +573,18 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(0, Icons.home_outlined, Icons.home, 'Início'),
-              _buildNavItem(1, Icons.inventory_2_outlined, Icons.inventory_2, 'Itens'),
-              _buildNavItem(2, Icons.chat_bubble_outline, Icons.chat_bubble, 'Contato'),
+              _buildNavItem(
+                1,
+                Icons.inventory_2_outlined,
+                Icons.inventory_2,
+                'Itens',
+              ),
+              _buildNavItem(
+                2,
+                Icons.chat_bubble_outline,
+                Icons.chat_bubble,
+                'Contato',
+              ),
               _buildNavItem(3, Icons.help_outline, Icons.help, 'Ajuda'),
             ],
           ),
@@ -582,7 +610,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _buildNavItem(int index, IconData icon, IconData activeIcon, String label) {
+  Widget _buildNavItem(
+    int index,
+    IconData icon,
+    IconData activeIcon,
+    String label,
+  ) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () => _onNavTap(index),
@@ -594,7 +627,9 @@ class _HomeScreenState extends State<HomeScreen> {
           vertical: 8,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.15) : Colors.transparent,
+          color: isSelected
+              ? AppColors.primary.withOpacity(0.15)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Column(

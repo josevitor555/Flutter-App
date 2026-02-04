@@ -31,8 +31,10 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      // home: const LoginScreen(),
-      home: const HomeScreen(),
+
+      home: const LoginScreen(),
+
+      // home: const HomeScreen(),
     );
   }
 }
