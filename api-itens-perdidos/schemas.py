@@ -27,9 +27,15 @@ class ItemResponse(ItemBase):
     class Config:
         from_attributes = True
 
+# Schema para criação de usuário com campos separados
 class UserCreate(BaseModel):
-    username: str
-    password: str
+    username: str  # Nome de usuário
+    email: str     # Email
+    password: str  # Senha
+
+class UserLogin(BaseModel):
+    email: str     # Email para login
+    password: str  # Senha
 
 class Token(BaseModel):
     access_token: str

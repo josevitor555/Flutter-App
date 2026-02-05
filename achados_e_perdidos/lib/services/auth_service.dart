@@ -7,30 +7,50 @@ class AuthService {
   static const String baseUrl = 'http://localhost:8000';
 
   // Método para realizar o login e obter o token
-  static Future<String?> login(String username, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/token'),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {'username': username, 'password': password},
-    );
+  // Agora aceita somente email e senha
+  static Future<String?> login(String email, String password) async {
+    try {
+      // Usa o endpoint padrão OAuth2 com form data
+      // O campo 'username' do OAuth2 agora será usado para enviar o email
+      final response = await http.post(
+        Uri.parse('$baseUrl/token'),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {'username': email, 'password': password}, // Envia email no campo username do OAuth2
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final authToken = AuthToken.fromJson(data);
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final authToken = AuthToken.fromJson(data);
 
-      // Salvar authToken.accessToken no celular (SharedPreferences)
-      await _saveToken(authToken.accessToken);
-      return authToken.accessToken;
+        // Salvar authToken.accessToken no celular (SharedPreferences)
+        await _saveToken(authToken.accessToken);
+        return authToken.accessToken;
+      } else {
+        print('Erro na autenticação: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Erro na requisição de login: $e');
+      return null;
     }
-    return null;
   }
 
   // Método para registrar um novo usuário
-  static Future<bool> register(String username, String password) async {
+  // Agora aceita username, email e password como campos separados
+  static Future<bool> register(String username, String email, String password) async {
+    final Map<String, dynamic> requestBody = {
+      'username': username,
+      'email': email,
+      'password': password,
+    };
+
     final response = await http.post(
       Uri.parse('$baseUrl/users/register'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': username, 'password': password}),
+      body: jsonEncode(requestBody),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {

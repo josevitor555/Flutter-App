@@ -12,7 +12,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _usernameController = TextEditingController(); // Novo campo para username
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -22,7 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -53,7 +53,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       // Chama o serviço de autenticação para registrar o usuário
       final success = await AuthService.register(
-        _nameController.text,
+        _usernameController.text, // Passa o username
+        _emailController.text,    // Passa o email
         _passwordController.text,
       );
 
@@ -180,13 +181,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                           const SizedBox(height: 24),
 
-                          // Campo de Nome
+                          // Campo de Nome de Usuário
                           TextFormField(
-                            controller: _nameController,
-                            textCapitalization: TextCapitalization.words,
+                            controller: _usernameController,
                             decoration: InputDecoration(
-                              labelText: 'Nome Completo',
-                              hintText: 'João Silva',
+                              labelText: 'Nome de Usuário',
+                              hintText: 'joaosilva',
                               prefixIcon: Icon(
                                 Icons.person_outline,
                                 color: AppColors
@@ -213,10 +213,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Por favor, insira seu nome';
+                                return 'Por favor, insira um nome de usuário';
                               }
                               if (value.length < 3) {
-                                return 'Nome deve ter no mínimo 3 caracteres';
+                                return 'Nome de usuário deve ter no mínimo 3 caracteres';
                               }
                               return null;
                             },

@@ -4,15 +4,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, Session, relationship
 from jose import jwt, JWTError
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from typing import Optional
 import uuid
 import shutil
 import os
+import re
 from passlib.context import CryptContext
-from schemas import ItemBase, ItemResponse, ItemUpdate, UserCreate, Token, ItemCreate
+from schemas import ItemBase, ItemResponse, ItemUpdate, UserCreate, UserLogin, Token, ItemCreate
+import json
 
 # ======================
 # CONFIG
@@ -42,7 +44,8 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True)
+    username = Column(String, unique=True)  # Nome de usuário
+    email = Column(String, unique=True)     # Email
     password = Column(String)
 
     itens = relationship("Item", back_populates="usuario")
@@ -96,8 +99,10 @@ def get_db():
         db.close()
 
 
-def authenticate_user(username: str, password: str, db: Session):
-    user = db.query(Usuario).filter(Usuario.username == username).first()
+def authenticate_user_by_email(email: str, password: str, db: Session):
+    # Procura usuário pelo email
+    user = db.query(Usuario).filter(Usuario.email == email).first()
+        
     if user and verify_password(password, user.password):
         return user
     return None
@@ -137,24 +142,34 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
+def is_valid_email(email: str) -> bool:
+    """Valida se o email tem um formato válido"""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+
 # ======================
 # AUTH
 # ======================
 
 @app.post("/token")
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    form_data: OAuth2PasswordRequestForm = Depends(),  # Continua aceitando OAuth2
     db: Session = Depends(get_db)
 ):
+    # Extrai email e senha do formulário OAuth2
+    email = form_data.username  # O campo username agora é usado para email
+    password = form_data.password
+    
     # Verificar tamanho da senha para evitar erros com bcrypt
-    if len(form_data.password.encode('utf-8')) > 72:
+    if len(password.encode('utf-8')) > 72:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Senha muito longa!")
     
-    user = authenticate_user(form_data.username, form_data.password, db)
+    user = authenticate_user_by_email(email, password, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Usuário ou senha incorretos"
+            detail="Email ou senha incorretos"
         )
 
     token = create_access_token({"sub": user.username, "id": user.id})
@@ -165,16 +180,30 @@ def login(
 def usuarios_me(user: Usuario = Depends(get_current_user)):
     return {
         "id": user.id,
-        "username": user.username
+        "username": user.username,
+        "email": user.email
     }
 
 
 @app.post("/users/register", response_model=Token)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    # Verificar se o usuário já existe
-    existing_user = db.query(Usuario).filter(
+    # Validar formato do email
+    if not is_valid_email(user.email):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Formato de email inválido")
+    
+    # Verificar se o email já está em uso
+    existing_email_user = db.query(Usuario).filter(
+        Usuario.email == user.email).first()
+    if existing_email_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email já está em uso"
+        )
+    
+    # Verificar se o username já está em uso
+    existing_username_user = db.query(Usuario).filter(
         Usuario.username == user.username).first()
-    if existing_user:
+    if existing_username_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username já está em uso"
@@ -186,7 +215,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     
     # Criar novo usuário com senha hash
     hashed_password = get_password_hash(user.password)
-    new_user = Usuario(username=user.username, password=hashed_password)
+    new_user = Usuario(username=user.username, email=user.email, password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -288,7 +317,6 @@ def listar_meus_itens(
     user: Usuario = Depends(get_current_user)
 ):
     return db.query(Item).filter(Item.usuario_id == user.id).all()
-
 # ======================
 # ITENS
 # ======================

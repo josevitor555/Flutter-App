@@ -26,45 +26,65 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      // Chama o serviço de autenticação para fazer login
-      final token = await AuthService.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      if (token != null) {
-        // Login bem-sucedido, redireciona para a tela inicial
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle, color: AppColors.white),
-                const SizedBox(width: 8),
-                const Text('Login realizado com sucesso!'),
-              ],
-            ),
-            backgroundColor: AppColors.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
+      try {
+        // Chama o serviço de autenticação para fazer login
+        final token = await AuthService.login(
+          _emailController.text,
+          _passwordController.text,
         );
 
-        // Redireciona para a tela inicial após um pequeno delay
-        await Future.delayed(const Duration(milliseconds: 800));
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
+        if (token != null) {
+          // Login bem-sucedido, redireciona para a tela inicial
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.check_circle, color: AppColors.white),
+                  const SizedBox(width: 8),
+                  const Text('Login realizado com sucesso!'),
+                ],
+              ),
+              backgroundColor: AppColors.primary,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+
+          // Redireciona para a tela inicial após um pequeno delay
+          await Future.delayed(const Duration(milliseconds: 800));
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/home');
+          }
+        } else {
+          // Login falhou
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.error_outline, color: AppColors.white),
+                  const SizedBox(width: 8),
+                  const Text('Credenciais inválidas. Tente novamente.'),
+                ],
+              ),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
         }
-      } else {
-        // Login falhou
+      } catch (e) {
+        // Erro na requisição de login
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
                 Icon(Icons.error_outline, color: AppColors.white),
                 const SizedBox(width: 8),
-                const Text('Credenciais inválidas. Tente novamente.'),
+                Text('Erro na conexão: $e'),
               ],
             ),
             backgroundColor: AppColors.error,
